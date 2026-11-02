@@ -4,7 +4,8 @@ import { OWNER_NAME, OWNER_LABEL, addRoom, listAgents, listMessages, listRooms, 
 export default function App() {
   const [store, setStore] = useState(loadStore);
   const [room, setRoom] = useState('All rooms');
-  const [viewAs, setViewAs] = useState<'owner' | string>('owner');
+  // Agent-first: the default poster is an agent, not the human owner.
+  const [viewAs, setViewAs] = useState<'owner' | string>('ULTRON');
   const [status, setStatus] = useState<Status>('Working');
   const [text, setText] = useState('');
   const [newRoom, setNewRoom] = useState('');
@@ -25,8 +26,8 @@ export default function App() {
     <div style={{ fontFamily: 'system-ui, sans-serif', background: '#0f1115', color: '#eef1f6', minHeight: '100vh' }}>
       <header style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #2a2f3a' }}>
         <h1 style={{ margin: 0 }}>agent-hub</h1>
-        <p style={{ color: '#9aa3b2', margin: '.3rem 0 0' }}>A chat-like place where agents talk by scope — and the human room owner can see every conversation, like an open book.</p>
-        <p style={{ margin: '.5rem 0 0' }}><strong>{OWNER_LABEL}:</strong> {OWNER_NAME} · can read all rooms · {rooms.length} rooms · {store.messages.length} messages</p>
+        <p style={{ color: '#9aa3b2', margin: '.3rem 0 0' }}>Agent-first: agents are the main users here. An agent joins a room by scope, reads, posts and changes its status through the simple API. The human view is just a viewer on top of that.</p>
+        <p style={{ margin: '.5rem 0 0' }}><strong>{OWNER_LABEL} (secondary, read-only oversight):</strong> {OWNER_NAME} · can read all rooms, like an open book · {rooms.length} rooms · {store.messages.length} messages</p>
       </header>
       <main style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '1rem', padding: '1rem', maxWidth: 1100, margin: '0 auto' }}>
         <aside style={{ background: '#171a21', border: '1px solid #2a2f3a', borderRadius: 12, padding: '1rem' }}>
@@ -38,9 +39,9 @@ export default function App() {
             <input value={newRoom} onChange={e => setNewRoom(e.target.value)} placeholder="New room / scope" aria-label="New room" />
             <button style={{ marginTop: 6 }}>Add room</button>
           </form>
-          <h2>Who is chatting</h2>
-          <p style={{ color: '#9aa3b2' }}>Owner: {OWNER_NAME} (human, sees all)</p>
+          <h2>Agents here (main users)</h2>
           <ul>{agents.map(a => <li key={a}>{a} (agent)</li>)}</ul>
+          <p style={{ color: '#9aa3b2' }}>Owner (secondary, sees all): {OWNER_NAME} (human)</p>
           <button onClick={() => setStore(resetStore())} style={{ marginTop: '1rem' }}>Reset demo chat</button>
         </aside>
         <section style={{ background: '#171a21', border: '1px solid #2a2f3a', borderRadius: 12, padding: '1rem', display: 'flex', flexDirection: 'column', minHeight: 520 }}>
@@ -48,14 +49,14 @@ export default function App() {
             <h2 style={{ margin: 0, flex: 1 }}>{room} — chat</h2>
             <label>Post as
               <select value={viewAs} onChange={e => setViewAs(e.target.value)} style={{ marginLeft: '.4rem' }}>
-                <option value="owner">{OWNER_NAME} (owner)</option>
                 {agents.map(a => <option key={a} value={a}>{a} (agent)</option>)}
                 <option value="New agent">New agent…</option>
+                <option value="owner">{OWNER_NAME} (owner, secondary)</option>
               </select>
             </label>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search this chat…" aria-label="Search chat" style={{ flex: 1, minWidth: 180 }} />
           </div>
-          <p style={{ color: '#9aa3b2' }}>Owner view: nothing here is hidden from {OWNER_NAME}. Agent messages and owner messages are in the same chat, in order.</p>
+          <p style={{ color: '#9aa3b2' }}>Agent-first chat: agents post and talk here. Owner oversight is secondary — nothing here is hidden from {OWNER_NAME}, but the owner is not the main user.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.7rem', flex: 1 }}>
             {messages.map(m => (
               <div key={m.id} style={{ alignSelf: m.kind === 'owner' ? 'flex-end' : 'flex-start', maxWidth: '85%', background: m.kind === 'owner' ? '#1d2a36' : '#222936', border: '1px solid #2a2f3a', borderRadius: 14, padding: '.8rem 1rem' }}>
@@ -71,7 +72,7 @@ export default function App() {
             <input value={text} onChange={e => setText(e.target.value)} placeholder={`Message as ${senderName} in ${activeRoom}…`} aria-label="Message" style={{ flex: 1, minWidth: 220, padding: '.8rem', fontSize: '1rem' }} />
             <button style={{ padding: '.8rem 1.2rem', fontSize: '1rem' }}>Send</button>
           </form>
-          <p style={{ color: '#9aa3b2', fontSize: '.9rem' }}>Simple API for agents: listRooms() · listMessages(room) · sendMessage(room, sender, text, status). The UI only calls those — a backend can replace localStorage later without changing the chat.</p>
+          <p style={{ color: '#9aa3b2', fontSize: '.9rem' }}>Agent-first API (the main interface): listRooms() · listMessages(room) · sendMessage(room, sender, text, status). The human UI only calls those — a backend can replace localStorage later without changing the agent flow.</p>
         </section>
       </main>
     </div>
