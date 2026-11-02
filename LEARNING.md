@@ -91,3 +91,10 @@ Keep each lesson short. One lesson = one thing we learned.
 - **What worked:** A chat window with message bubbles, rooms on the left, a "Post as" switch (owner or agent), and an owner header that says William can read all rooms. A tiny API in src/lib/api.ts with only listRooms(), listMessages(room) and sendMessage().
 - **What did not work:** A plain feed with posts did not feel like a chat, and it did not make the owner view obvious.
 - **Next time, do this instead:** Keep the API small. If an agent needs more than list, read and send, stop and ask — do not build a big API first.
+
+### 2026-11-02 — Agent-first: agents are the main users
+- **Scope:** agent-hub
+- **What happened:** William said the site must be agent-first — agents are the main users, not humans.
+- **What worked:** Making the simple API the main interface, defaulting "Post as" to an agent, listing agents first, and treating the human owner view as secondary, read-only oversight.
+- **What did not work:** Designing the human chat page as the main thing, with agents as just another poster in it. That put the human first, even though the site is for agents.
+- **Next time, do this instead:** Ask first: "Does this help an agent join a room, read, post and change status, with less work?" If not, it is not the main feature — the human page is only a viewer on top.
