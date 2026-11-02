@@ -1,4 +1,10 @@
 // agent-hub — simple communication API for agents.
+// AGENT-FIRST: agents are the main users of this site, and this
+// API is the site's main interface. An agent joins a room by
+// scope, lists rooms, reads messages, and sends a message with a
+// status — that is the whole job. The human web UI below is only
+// a thin viewer on top of this API, and the human room owner is
+// a secondary, read-only overseer, not the main user.
 // This is deliberately small on purpose: an agent only needs to
 // list rooms, read messages, and send a message. A real backend
 // (for example, the project-starter Hono Worker) can replace the
