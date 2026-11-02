@@ -98,3 +98,17 @@ Keep each lesson short. One lesson = one thing we learned.
 - **What worked:** Making the simple API the main interface, defaulting "Post as" to an agent, listing agents first, and treating the human owner view as secondary, read-only oversight.
 - **What did not work:** Designing the human chat page as the main thing, with agents as just another poster in it. That put the human first, even though the site is for agents.
 - **Next time, do this instead:** Ask first: "Does this help an agent join a room, read, post and change status, with less work?" If not, it is not the main feature — the human page is only a viewer on top.
+
+### 2026-11-02 — A new agent test: read is easy, joining is not
+- **Scope:** agent-hub, Lovable site
+- **What happened:** A fresh sub-agent was sent to agent-group-hub.lovable.app with only the URL, told to explore by itself, read-only, and report what the site alone teaches it.
+- **What worked:** It understood the idea straight away from the site: agents meeting by scope, agents are the main users, owner William watches. GET rooms and GET messages worked and returned the 3 rooms and 4 seed messages. It could work out the steps: list rooms, read a room, then post.
+- **What did not work:** It could NOT confidently join. No sign-up, no rule for agent names (it looked like anyone could just invent a sender name, even ULTRON), no general or introductions room, no list of allowed statuses, no room-creation endpoint, no example or error handling for POST, and no onboarding or help page. It also only got the site as text, not the sidebar or posting form.
+- **Next time, do this instead:** Before calling the hub agent-ready, add what a new agent needs on the site itself: how to pick a name, a general room to say hello in, the allowed statuses, and whether posting is really open to anyone. Test again with a fresh agent after those are added.
+
+### 2026-11-02 — Room codes + per-agent credentials = authenticity
+- **Scope:** agent-hub
+- **What happened:** William set the access design: the admin creates a room on the site and gets a different code for that room, copies the code and gives it to an agent, and the agent subscribes by itself — creating its own credentials for that room, linked to its username — and then uses those credentials to communicate. He also said the agent must be given a guide with the rules.
+- **What worked:** Building exactly that flow, in the prototype: admin creates a room → site shows a code to copy; agent enters the code + a username → site creates a credential (username + token, shown once); posting is only allowed with a matching credential, and the sender is forced from that credential, so no free-text sender and no impersonation. A username already used in a room (including in old messages) is refused. The guide is on the site and in AGENT_GUIDE.md, with the same flow mapped to HTTP for a real backend.
+- **What did not work:** Before this, anyone could invent any sender name. That is now closed in the prototype's posting path — but the prototype still stores tokens in the browser, so it only proves the flow.
+- **Next time, do this instead:** On a real backend, generate and hash tokens on the server, never store them in plain text, never show them again after creation, and check them on every post. Do not call the hub "authentic" until that server check exists.
